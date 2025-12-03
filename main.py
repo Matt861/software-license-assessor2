@@ -3,7 +3,7 @@ from pathlib import Path
 import print_utils
 import utils
 from models.FileData import FileDataManager
-from search import fuzzy_license_search
+from search import fuzzy_license_search, keyword_search
 from timer import Timer
 from configuration import Configuration as Config
 from tools import assessment_extractor, assessment_reader, file_release_assessor, file_hash_assessor, \
@@ -36,6 +36,8 @@ def main() -> None:
     fuzzy_license_search.fuzzy_match_licenses_in_assessment_files(Config.license_header_indexes)
     # FILTER FUZZY MATCHES
     fuzzy_matches_evaluator.determine_best_fuzzy_matches_from_file_data()
+    # SCAN ALL ASSESSMENT FILES FOR KEYWORDS
+    keyword_search.search_all_assessment_files_for_keyword_matches()
     # GENERATE CSV OF ASSESSMENT DATA
     assessment_data_generator.write_license_data_to_csv("".join([Config.assessment_name_str, "_data", ".csv"]))
 
