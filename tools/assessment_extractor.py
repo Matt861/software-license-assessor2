@@ -494,14 +494,14 @@ def extract_nested_archives(dest_root: Path) -> None:
 
 
 # ---------- CLI ----------
-def main(source_dir, dest_dir) -> None:
+def create_assessment_from_source(source_dir, dest_dir) -> None:
 
     if source_dir.is_dir():
         # Normal directory: copy + first-level extraction, then nested extraction
         copy_tree_with_extraction(source_dir, dest_dir)
-        rel_path = Path(source_dir.name)
-        target_dir_rel = strip_multi_suffix(rel_path)
-        target_dir = dest_dir / target_dir_rel
+        #rel_path = Path(source_dir.name)
+        #target_dir_rel = strip_multi_suffix(rel_path)
+        #target_dir = dest_dir / target_dir_rel
         # Second phase: extract all nested archives/compressed files in-place
         extract_nested_archives(dest_dir)
 
@@ -526,4 +526,4 @@ def main(source_dir, dest_dir) -> None:
 
 if __name__ == "__main__":
     Config.dest_dir.mkdir(parents=True, exist_ok=True)
-    main(Config.source_dir, Config.dest_dir)
+    create_assessment_from_source(Config.source_dir, Config.dest_dir)

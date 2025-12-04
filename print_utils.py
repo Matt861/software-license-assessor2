@@ -13,9 +13,9 @@ def print_files_with_full_license_match():
     for file_data in Config.file_data_manager.get_all_file_data():
         if file_data.license_matches:
             full_license_match_count += 1
-            print(f"{"File: "}{Path(file_data.file_path).relative_to(Config.dest_dir)}")
-            print(f"{"License name(s): "}{file_data.license_names}")
-    print(f"{"Total files with full license match: "}{full_license_match_count}")
+            print(f"{'File: '}{Path(file_data.file_path).relative_to(Config.dest_dir)}")
+            print(f"{'License name(s): '}{file_data.license_names}")
+    print(f"{'Total files with full license match: '}{full_license_match_count}")
 
 
 def get_best_match_percent(file_data) -> float:
@@ -51,10 +51,10 @@ def print_files_with_fuzzy_license_matches(file_path="output/fuzzy_license_match
             if file_data.fuzzy_license_match:
                 fuzzy_match = file_data.fuzzy_license_match
                 fuzzy_license_match_count += 1
-                print(f"{"File: "}{Path(file_data.file_path).relative_to(Config.dest_dir)}")
+                print(f"{'File: '}{Path(file_data.file_path).relative_to(Config.dest_dir)}")
                 #print(f"File: {Path(file_data.file_path)}")
                 #print(f"{"License name(s): "}{fuzzy_license_match.license_name}")
-                print(f"{"License name(s): "}{file_data.license_names}")
+                print(f"{'License name(s): '}{file_data.license_names}")
                 print(f"Match percent: {fuzzy_match.match_percent:.2f}%")
                 print(f"Expected match version(s): {fuzzy_match.expected_versions}")
                 print(f"Found match version(s): {fuzzy_match.found_versions}")
@@ -65,7 +65,7 @@ def print_files_with_fuzzy_license_matches(file_path="output/fuzzy_license_match
                 print("Matched substring:")
                 print(fuzzy_match.matched_substring)
 
-        print(f"{"Total files with fuzzy license match: "}{fuzzy_license_match_count}")
+        print(f"{'Total files with fuzzy license match: '}{fuzzy_license_match_count}")
 
 
 # def print_files_with_fuzzy_license_matches(file_path="output/fuzzy_license_matches.txt"):

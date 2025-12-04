@@ -19,10 +19,10 @@ Config.file_data_manager = FileDataManager()
 
 def main() -> None:
 
-    #assessment_extractor.main(Config.source_dir, Config.dest_dir)
+    assessment_extractor.create_assessment_from_source(Config.source_project_dir, Config.dest_assessment_dir)
 
     # CREATES A FILE DATA OBJECT FOR EACH FILE IN THE ASSESSMENT
-    assessment_reader.read_all_assessment_files(Path(Config.dest_dir, Config.assessment_name))
+    assessment_reader.read_all_assessment_files(Config.dest_assessment_dir)
     # DETERMINE IF A FILE IS PART OF THE RELEASE
     file_release_assessor.set_file_release_status()
     # GET/SET SHA256 HASH VALUE FOR EACH FILE
@@ -39,7 +39,7 @@ def main() -> None:
     # SCAN ALL ASSESSMENT FILES FOR KEYWORDS
     keyword_search.search_all_assessment_files_for_keyword_matches()
     # GENERATE CSV OF ASSESSMENT DATA
-    assessment_data_generator.write_license_data_to_csv("".join([Config.assessment_name_str, "_data", ".csv"]))
+    assessment_data_generator.write_license_data_to_csv("".join([Config.assessment_name, "_data", ".csv"]))
 
 
 

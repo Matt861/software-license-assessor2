@@ -18,22 +18,43 @@ class Configuration:
     root_dir = get_project_root()
     ignore_dirs_str = configs.get('IGNORE_DIRS').data
     ignore_dirs = [part.strip() for part in ignore_dirs_str.split(",")]
-    review_file_dir = configs.get('REVIEW_FILE_DIR').data
     source_dir = Path(configs.get("SOURCE_DIR").data).resolve()
     dest_dir = Path(configs.get("DEST_DIR").data).resolve()
     spdx_licenses_dir = Path(root_dir, configs.get("SPDX_LICENSES_DIR").data)
     manual_licenses_dir = Path(root_dir, configs.get("MANUAL_LICENSES_DIR").data)
     all_licenses_dir = [spdx_licenses_dir, manual_licenses_dir]
     spdx_license_headers_dir = Path(root_dir, configs.get("SPDX_LICENSE_HEADERS_DIR").data)
-    manual_license_headers_dir = Path(configs.get("MANUAL_LICENSE_HEADERS_DIR").data).resolve()
+    manual_license_headers_dir = Path(root_dir, configs.get("MANUAL_LICENSE_HEADERS_DIR").data)
     all_license_headers_dir = [spdx_license_headers_dir, manual_license_headers_dir]
-    project_name = configs.get("PROJECT_NAME").data
-    #assessments_dir = Path(configs.get("ASSESSMENTS_DIR").data)
-    assessment_name = Path(configs.get("ASSESSMENT_NAME").data)
-    assessment_name_str = configs.get("ASSESSMENT_NAME").data
+    source_project_name = configs.get("SOURCE_PROJECT_NAME").data
+    assessment_name = configs.get("ASSESSMENT_NAME").data
     file_hash_algorithm = configs.get("FILE_HASH_ALGORITHM").data
     output_dir = Path(configs.get("OUTPUT_DIR").data).resolve()
     data_dir = Path(configs.get("DATA_DIR").data).resolve()
+    source_project_dir = Path(source_dir, source_project_name)
+    dest_assessment_dir = Path(dest_dir, assessment_name)
+
+    # USE THIS ON NETWORKS WHERE DOTENV AND JPROPERTIES ARE NOT APPROVED FOR USE
+    # root_dir = get_project_root()
+    # ignore_dirs_str = "src/test, src\\test"
+    # ignore_dirs = [part.strip() for part in ignore_dirs_str.split(",")]
+    # source_dir = "C:/license_assessments/source"
+    # dest_dir = "C:/license_assessments/extracted"
+    # spdx_licenses_dir = Path(root_dir, "input/spdx_licenses")
+    # manual_licenses_dir = Path(root_dir, "input/manual_licenses")
+    # all_licenses_dir = [spdx_licenses_dir, manual_licenses_dir]
+    # spdx_license_headers_dir = Path(root_dir, "input/spdx_license_headers")
+    # manual_license_headers_dir = Path(root_dir, "input/manual_license_headers")
+    # all_license_headers_dir = [spdx_license_headers_dir, manual_license_headers_dir]
+    # source_project_name = "my-ubi8-java8.tar"
+    # assessment_name = "ubi8-java8-assessment"
+    # file_hash_algorithm = "sha256"
+    # output_dir = Path(root_dir, "output")
+    # data_dir = Path(root_dir, "data")
+    # source_project_dir = Path(source_dir, source_project_name)
+    # dest_assessment_dir = Path(dest_dir, assessment_name)
+
+
 
     # Global instance of file data manager
     file_data_manager = None
