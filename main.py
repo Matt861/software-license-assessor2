@@ -9,7 +9,7 @@ from search import fuzzy_license_search, keyword_search, full_license_search, ke
 from timer import Timer
 from configuration import Configuration as Config
 from tools import assessment_extractor, assessment_reader, file_release_assessor, file_hash_assessor, \
-    file_content_indexer, fuzzy_matches_evaluator, assessment_data_generator
+    file_content_indexer, fuzzy_matches_evaluator, assessment_data_generator, assessment_reader_multithreaded
 from tools.file_content_indexer import PatternIndex
 
 p = Path(__file__).resolve()
@@ -27,7 +27,8 @@ def main() -> None:
     # CREATES A FILE DATA OBJECT FOR EACH FILE IN THE ASSESSMENT
     assessment_reader_timer = Timer()
     assessment_reader_timer.start("starting assessment reader timer")
-    assessment_reader.read_all_assessment_files(Config.dest_assessment_dir)
+    #assessment_reader.read_all_assessment_files(Config.dest_assessment_dir)
+    assessment_reader_multithreaded.read_all_assessment_files(Config.dest_assessment_dir)
     assessment_reader_timer.stop("stopping assessment reader timer")
     print(logger.info(assessment_reader_timer.elapsed("Elapsed time for assessment reader: ")))
 
@@ -104,7 +105,7 @@ def main() -> None:
     print("Begin csv gen")
     csv_gen_timer = Timer()
     csv_gen_timer.start("starting csv gen timer")
-    assessment_data_generator.write_license_data_to_csv("".join([Config.assessment_name, "_data3", ".csv"]))
+    assessment_data_generator.write_license_data_to_csv("".join([Config.assessment_name, "_data4", ".csv"]))
     csv_gen_timer.stop("stopping csv gen timer")
     print(logger.info(csv_gen_timer.elapsed("Elapsed time for csv gen: ")))
 
@@ -123,6 +124,7 @@ if __name__ == "__main__":
 
     # print_utils.print_files_with_full_license_match()
     print_utils.print_files_with_fuzzy_license_matches()
+    print_utils.print_empty_files()
     print('Done')
     main_timer.stop("stopping main timer")
     print(logger.info(main_timer.elapsed("Elapsed time for main: ")))

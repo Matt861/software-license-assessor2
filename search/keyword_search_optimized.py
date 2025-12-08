@@ -1,5 +1,7 @@
+import collections
 import re
-from typing import Dict, List, Union
+from collections import defaultdict
+from typing import Dict, List, Union, Set, Tuple
 import utils
 from configuration import Configuration as Config
 from input.keyword_strings import copyright_matches, license_matches, prohibitive_matches, general_matches, \
@@ -7,51 +9,61 @@ from input.keyword_strings import copyright_matches, license_matches, prohibitiv
 
 
 ALL_MATCH_LISTS: Dict[str, List[str]] = {
-    #"copyright": copyright_matches,
     "license": license_matches,
-    #"prohibitive": prohibitive_matches,
     "general": general_matches,
-    #"export": export_matches,
     "custom": custom_search_matches,
     "license_name": license_name_matches,
     "license_abbreviation": license_abbreviation_matches,
     "license_urls": license_url_matches,
 }
 
-def _normalize_term(term: str) -> str:
-    # Assumes this returns lowercase / punctuation-stripped text in the same
-    # shape you use for content normalization.
+
+def _normalize_term_string(term: str) -> str:
+    # Must match the normalization you use for file content
     return utils.remove_punctuation_and_normalize_text(term)
 
 
-# Normalize and deduplicate all terms once
-NORMALIZED_MATCH_LISTS: Dict[str, List[str]] = {
-    category: list(dict.fromkeys(
-        _normalize_term(term)
-        for term in terms
-        if term  # skip empty strings / None
-    ))
-    for category, terms in ALL_MATCH_LISTS.items()
-}
+# --- Precomputed indexes ---
 
-# Build a compiled regex per category, enforcing “standalone token” boundaries.
-# We mimic your "not embedded in larger alphanumeric token" logic:
-# before char is not [0-9A-Za-z] (or start of string)
-# after char is not [0-9A-Za-z] (or end of string)
-_BOUNDARY_BEFORE = r'(?<![0-9A-Za-z])'
-_BOUNDARY_AFTER = r'(?![0-9A-Za-z])'
+# Category -> list of normalized terms in original order (deduped per category)
+NORMALIZED_TERMS_BY_CATEGORY: Dict[str, List[str]] = {}
 
-NORMALIZED_PATTERNS: Dict[str, re.Pattern] = {}
+# token -> list of (category, term) for single-word terms
+SINGLE_WORD_INDEX: Dict[str, List[Tuple[str, str]]] = collections.defaultdict(list)
 
-for category, terms in NORMALIZED_MATCH_LISTS.items():
-    if not terms:
-        continue
+# first_token -> list of (category, term, term_tokens) for multi-word terms
+MULTI_WORD_INDEX: Dict[str, List[Tuple[str, str, List[str]]]] = collections.defaultdict(list)
 
-    # Escape each term to avoid regex meta-char issues
-    # and join into a single alternation.
-    alternation = "|".join(re.escape(t) for t in terms if t)
-    pattern = re.compile(_BOUNDARY_BEFORE + "(" + alternation + ")" + _BOUNDARY_AFTER)
-    NORMALIZED_PATTERNS[category] = pattern
+for category, terms in ALL_MATCH_LISTS.items():
+    seen = set()
+    normalized_terms: List[str] = []
+
+    for term in terms:
+        if not term:
+            continue
+
+        norm = _normalize_term_string(term)
+        if not norm:
+            continue
+
+        # Deduplicate within this category
+        if norm in seen:
+            continue
+        seen.add(norm)
+        normalized_terms.append(norm)
+
+        tokens = norm.split()
+        if not tokens:
+            continue
+
+        if len(tokens) == 1:
+            # single-word term
+            SINGLE_WORD_INDEX[tokens[0]].append((category, norm))
+        else:
+            # multi-word term, index by first token
+            MULTI_WORD_INDEX[tokens[0]].append((category, norm, tokens))
+
+    NORMALIZED_TERMS_BY_CATEGORY[category] = normalized_terms
 
 
 def _find_matches_in_content(content: Union[str, bytes]) -> Dict[str, List[str]]:
@@ -60,27 +72,57 @@ def _find_matches_in_content(content: Union[str, bytes]) -> Dict[str, List[str]]
         { category_name: [matched_strings_from_that_category] }
 
     Matching is:
-    - Case-insensitive / normalized via utils.remove_punctuation_and_normalize_text
-    - Based on full strings from the lists (post-normalization).
-    - The matched string must not be embedded inside a larger
-      alphanumeric token (enforced by regex boundaries).
+    - Case-insensitive via utils.remove_punctuation_and_normalize_text
+    - Based on full normalized strings from the lists.
+    - Terms are matched as whole tokens or sequences of tokens
+      (no matching inside larger alphanumeric tokens).
     """
-    # Normalize file content once
     text = utils.remove_punctuation_and_normalize_text(content)
+    if not text:
+        return {}
 
-    matches: Dict[str, List[str]] = {}
+    tokens = text.split()
+    if not tokens:
+        return {}
 
-    for category, pattern in NORMALIZED_PATTERNS.items():
-        # Find *all* occurrences of any term in this category
-        found = pattern.findall(text)
-        if not found:
+    # category -> set of normalized terms found
+    found_by_category: Dict[str, Set[str]] = defaultdict(set)
+
+    # --- Single-word matches: use the set of unique tokens ---
+    unique_tokens = set(tokens)
+    for tok in unique_tokens:
+        entries = SINGLE_WORD_INDEX.get(tok)
+        if not entries:
+            continue
+        for category, term in entries:
+            found_by_category[category].add(term)
+
+    # --- Multi-word matches: single pass over tokens ---
+    n = len(tokens)
+    for i, tok in enumerate(tokens):
+        candidates = MULTI_WORD_INDEX.get(tok)
+        if not candidates:
             continue
 
-        # Current behavior is "term appears or not", not per occurrence;
-        # so dedupe while preserving order:
-        unique_terms = list(dict.fromkeys(found))
-        if unique_terms:
-            matches[category] = unique_terms
+        remaining = n - i
+        for category, term, term_tokens in candidates:
+            L = len(term_tokens)
+            if L > remaining:
+                continue
+            # Compare the slice of tokens to the term tokens
+            if tokens[i:i + L] == term_tokens:
+                found_by_category[category].add(term)
+
+    # --- Build output preserving original term order per category ---
+    matches: Dict[str, List[str]] = {}
+    for category, terms_in_order in NORMALIZED_TERMS_BY_CATEGORY.items():
+        found_set = found_by_category.get(category)
+        if not found_set:
+            continue
+
+        ordered = [t for t in terms_in_order if t in found_set]
+        if ordered:
+            matches[category] = ordered
 
     return matches
 

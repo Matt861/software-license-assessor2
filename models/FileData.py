@@ -55,6 +55,7 @@ class FileData:
         self._fuzzy_license_matches = []
         self._fuzzy_license_match = None
         self._has_full_license = False
+        self._file_is_empty = False
         # self._header_data = header_data if header_data is not None else []
         # self._file_entry = file_entry if file_entry is not None else []
         # self._file_search_data = file_search_data if file_search_data is not None else []
@@ -176,6 +177,14 @@ class FileData:
     @has_full_license.setter
     def has_full_license(self, has_full_license):
         self._has_full_license = has_full_license
+
+    @property
+    def file_is_empty(self):
+        return self._file_is_empty
+
+    @file_is_empty.setter
+    def file_is_empty(self, file_is_empty):
+        self._file_is_empty = file_is_empty
     #
     # @property
     # def header_data(self):

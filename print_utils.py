@@ -68,6 +68,17 @@ def print_files_with_fuzzy_license_matches(file_path="output/fuzzy_license_match
         print(f"{'Total files with fuzzy license match: '}{fuzzy_license_match_count}")
 
 
+def print_empty_files(file_path="output/empty_files.txt"):
+    file_is_empty_count = 0
+    with tee_stdout(Path(Config.root_dir) / file_path):
+        for file_data in Config.file_data_manager.get_all_file_data():
+            if file_data.file_is_empty:
+                print(f"{'File: '}{Path(file_data.file_path).relative_to(Config.dest_dir)}")
+                file_is_empty_count += 1
+
+    print(f"{'Total empty files: '}{file_is_empty_count}")
+
+
 # def print_files_with_fuzzy_license_matches(file_path="output/fuzzy_license_matches.txt"):
 #     sorted_list = sorted(
 #         Config.file_data_manager.get_all_file_data(),
