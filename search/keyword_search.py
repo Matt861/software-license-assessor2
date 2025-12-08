@@ -30,8 +30,6 @@ def _find_matches_in_content(content: Union[str, bytes]) -> Dict[str, List[str]]
     - The matched string must not be embedded inside a larger
       alphanumeric token. For example, 'mpl' should NOT match 'fdsmplew'.
     """
-    # text = utils.to_text(content)
-    # text_lower = text.lower()
     text = utils.remove_punctuation_and_normalize_text(content)
 
     def _contains_standalone(haystack: str, needle: str) -> bool:

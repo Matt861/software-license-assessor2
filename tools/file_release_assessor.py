@@ -13,6 +13,7 @@ def is_ignored_dir(src_dir: Path) -> bool:
 def set_file_release_status():
     for file_data in Config.file_data_manager.get_all_file_data():
         if file_data and file_data.file_path:
+            print(f"Setting release status for: {file_data.file_path}")
             if is_ignored_dir(file_data.file_path):
                 file_data.is_released = False
             else:

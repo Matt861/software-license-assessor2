@@ -73,6 +73,7 @@ def compute_hash(file_data: FileData, algo: str = "sha256") -> str:
 def compute_file_hashes_for_assessment():
 
     for file_data in Config.file_data_manager.get_all_file_data():
+        print(f"Computing hash for: {file_data.file_path}")
         try:
             digest = compute_hash(file_data, Config.file_hash_algorithm)
             # print(f"Algorithm: {algorithm}")

@@ -197,6 +197,7 @@ def _extract_versions(text: str) -> Optional[List[str]]:
 def fuzzy_match_licenses_in_assessment_files(pattern_indexes):
     for f_idx in Config.file_indexes:
         file_model = f_idx.source_obj  # original model instance
+        print(f"Fuzzy searching file: {file_model.file_path}")
         for p_idx in pattern_indexes:
             pattern_path = p_idx.source_path  # the Path key from Dict[Path, str]
             fuzzy_match_result = best_match_indexed(f_idx, p_idx, anchor_size=4)

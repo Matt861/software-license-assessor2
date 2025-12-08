@@ -64,6 +64,7 @@ def build_file_indexes(
     file_indexes: List[FileIndex] = []
 
     for obj in model_objects:
+        print(f"Indexing file: {obj.file_path}")
         # Adjust property name as needed (e.g. obj.file_content)
         text = _ensure_text(obj.file_content)
         text = utils.remove_punctuation_and_normalize_text(text)
@@ -94,6 +95,7 @@ def build_pattern_indexes_from_dict(
     pattern_indexes: List[PatternIndex] = []
 
     for path, content in patterns.items():
+        print(f"Indexing license: {path}")
         text = _ensure_text(content)
         raw_tokens = [m.group(0) for m in WORD_RE.finditer(text)]
         tokens = [w.lower() for w in raw_tokens]

@@ -185,10 +185,9 @@ def load_file_contents_from_directory(license_dirs: List[Path]) -> Dict[Path, st
                 if not filename.lower().endswith(".txt"):
                     continue
 
-                if "_v1" in filename:
-                    print('')
-
                 license_path = Path(dirpath, filename).resolve()
+
+                print(f"Reading license: {license_path}")
 
                 try:
                     with open(license_path, "r", encoding="utf-8") as f:

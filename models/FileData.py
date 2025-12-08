@@ -53,7 +53,8 @@ class FileData:
         self._license_match_strength = None
         self._keyword_combination_matches = None
         self._fuzzy_license_matches = []
-        self.fuzzy_license_match = None
+        self._fuzzy_license_match = None
+        self._has_full_license = False
         # self._header_data = header_data if header_data is not None else []
         # self._file_entry = file_entry if file_entry is not None else []
         # self._file_search_data = file_search_data if file_search_data is not None else []
@@ -167,6 +168,14 @@ class FileData:
     @fuzzy_license_match.setter
     def fuzzy_license_match(self, fuzzy_license_match):
         self._fuzzy_license_match = fuzzy_license_match
+
+    @property
+    def has_full_license(self):
+        return self._has_full_license
+
+    @has_full_license.setter
+    def has_full_license(self, has_full_license):
+        self._has_full_license = has_full_license
     #
     # @property
     # def header_data(self):
@@ -244,9 +253,9 @@ class FileData:
         is_text = isinstance(self.file_content, str)
         # Choose what to save.
         return {
-            "file_path": str(Path(self.file_path).relative_to(Config.assessments_dir)),
+            "file_path": str(Path(self.file_path).relative_to(Config.dest_dir)),
             "file_hash": self.file_hash,
-            "license": self.license_names,
+            "licenses": self.license_names,
             "file_content_b64": compress_to_b64(self.file_content),
             "file_content_is_text": is_text,
             # add "file_extension": self.file_extension if you want it too
@@ -259,7 +268,7 @@ class FileData:
         """
         file_path = Path(data["file_path"])
         file_hash = data.get("file_hash")
-        license_name = data.get("license")
+        license_names = data.get("licenses")
         is_text = data.get("file_content_is_text", False)
 
         file_content = decompress_from_b64(
@@ -272,7 +281,7 @@ class FileData:
             file_content=file_content,
         )
         obj.file_hash = file_hash
-        obj.license_names = license_name
+        obj.license_names = license_names
         return obj
 
 
