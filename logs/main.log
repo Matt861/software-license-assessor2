@@ -1,12 +1,12 @@
-2025-12-08 17:09:29,313 - loggers.main_logger - INFO - Elapsed time for assessment reader:  0:00:03.982777
-2025-12-08 17:09:33,180 - loggers.main_logger - INFO - Elapsed time for license header reader:  0:00:00.028025
-2025-12-08 17:09:33,992 - loggers.main_logger - INFO - Elapsed time for license reader:  0:00:00.810866
-2025-12-08 17:10:57,653 - loggers.main_logger - INFO - Elapsed time for file indexing:  0:01:23.661623
-2025-12-08 17:10:57,659 - loggers.main_logger - INFO - Elapsed time for license indexing:  0:00:00.006003
-2025-12-08 17:12:28,932 - loggers.main_logger - INFO - Elapsed time for full license search:  0:01:31.272488
-2025-12-08 17:12:54,961 - loggers.main_logger - INFO - Elapsed time for fuzzy license search:  0:00:26.028480
-2025-12-08 17:12:54,984 - loggers.main_logger - INFO - Elapsed time for fuzzy evaluator:  0:00:00.023034
-2025-12-08 17:14:24,213 - loggers.main_logger - INFO - Elapsed time for keyword search:  0:01:29.228794
-2025-12-08 17:14:24,535 - loggers.main_logger - INFO - Elapsed time for csv gen:  0:00:00.321734
-2025-12-08 17:14:39,087 - loggers.main_logger - INFO - Elapsed time for file data to json:  0:00:14.551801
-2025-12-08 17:14:39,216 - loggers.main_logger - INFO - Elapsed time for main:  0:05:13.886473
+2025-12-08 21:30:00,232 - loggers.main_logger - INFO - Elapsed time for assessment reader:  0:00:04.515998
+2025-12-08 21:30:13,674 - loggers.main_logger - INFO - Elapsed time for license header reader:  0:00:00.026000
+2025-12-08 21:30:14,445 - loggers.main_logger - INFO - Elapsed time for license reader:  0:00:00.770364
+2025-12-08 21:31:39,777 - loggers.main_logger - INFO - Elapsed time for file indexing:  0:01:25.331410
+2025-12-08 21:31:39,787 - loggers.main_logger - INFO - Elapsed time for license indexing:  0:00:00.009404
+2025-12-08 21:32:44,896 - loggers.main_logger - INFO - Elapsed time for full license search:  0:01:05.109432
+2025-12-08 21:33:10,403 - loggers.main_logger - INFO - Elapsed time for fuzzy license search:  0:00:25.506996
+2025-12-08 21:33:10,422 - loggers.main_logger - INFO - Elapsed time for fuzzy evaluator:  0:00:00.019500
+2025-12-08 21:33:25,703 - loggers.main_logger - INFO - Elapsed time for keyword search:  0:00:15.280625
+2025-12-08 21:33:26,036 - loggers.main_logger - INFO - Elapsed time for csv gen:  0:00:00.333046
+2025-12-08 21:33:35,146 - loggers.main_logger - INFO - Elapsed time for file data to json:  0:00:09.110320
+2025-12-08 21:33:35,276 - loggers.main_logger - INFO - Elapsed time for main:  0:03:39.560485

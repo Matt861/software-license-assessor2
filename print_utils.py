@@ -35,7 +35,7 @@ def get_best_match_percent(file_data) -> float:
             best = fuzzy.match_percent
     return best
 
-def print_files_with_fuzzy_license_matches(file_path="output/fuzzy_license_matches2.txt"):
+def print_files_with_fuzzy_license_matches(file_path="output/fuzzy_license_matches3.txt"):
     sorted_list = sorted(
         Config.file_data_manager.get_all_file_data(),
         key=lambda f: (

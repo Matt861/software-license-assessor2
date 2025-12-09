@@ -9,7 +9,8 @@ from search import fuzzy_license_search, keyword_search, full_license_search, ke
 from timer import Timer
 from configuration import Configuration as Config
 from tools import assessment_extractor, assessment_reader, file_release_assessor, file_hash_assessor, \
-    file_content_indexer, fuzzy_matches_evaluator, assessment_data_generator, assessment_reader_multithreaded
+    file_content_indexer, fuzzy_matches_evaluator, assessment_data_generator, assessment_reader_multithreaded, \
+    decoded_file_content_cleaner
 from tools.file_content_indexer import PatternIndex
 
 p = Path(__file__).resolve()
@@ -37,6 +38,9 @@ def main() -> None:
 
     # GET/SET SHA256 HASH VALUE FOR EACH FILE
     file_hash_assessor.compute_file_hashes_for_assessment()
+
+    # CLEAN DECODED BINARY TEXT
+    decoded_file_content_cleaner.clean_decoded_assessment_files_content()
 
     # READ/LOAD/NORMALIZE CONTENT OF LICENSES
     license_header_reader_timer = Timer()
@@ -96,8 +100,8 @@ def main() -> None:
     print("Begin keyword search")
     keyword_search_timer = Timer()
     keyword_search_timer.start("starting keyword search timer")
-    keyword_search.search_all_assessment_files_for_keyword_matches()
-    #keyword_search_optimized.search_all_assessment_files_for_keyword_matches()
+    #keyword_search.search_all_assessment_files_for_keyword_matches()
+    keyword_search_optimized.search_all_assessment_files_for_keyword_matches()
     keyword_search_timer.stop("stopping keyword search timer")
     print(logger.info(keyword_search_timer.elapsed("Elapsed time for keyword search: ")))
 
@@ -105,7 +109,7 @@ def main() -> None:
     print("Begin csv gen")
     csv_gen_timer = Timer()
     csv_gen_timer.start("starting csv gen timer")
-    assessment_data_generator.write_license_data_to_csv("".join([Config.assessment_name, "_data4", ".csv"]))
+    assessment_data_generator.write_license_data_to_csv("".join([Config.assessment_name, "_data9", ".csv"]))
     csv_gen_timer.stop("stopping csv gen timer")
     print(logger.info(csv_gen_timer.elapsed("Elapsed time for csv gen: ")))
 

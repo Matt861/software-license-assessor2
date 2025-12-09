@@ -9,6 +9,8 @@ from loggers.assessment_reader_logger import assessment_reader_logger as logger
 
 
 def _read_single_file(file_path: Path) -> Optional["FileData"]:
+    if "PropertyEditorManager" in str(file_path):
+        print('found')
     try:
         with open(file_path, "rb") as f:
             raw: bytes = f.read()
@@ -25,16 +27,16 @@ def _read_single_file(file_path: Path) -> Optional["FileData"]:
         content: Union[str, bytes] = ""
         print(logger.info(f"File empty: {file_path}"))
     else:
-        # Try to decode as UTF-8, fall back to bytes
         try:
-            content = raw.decode("utf-8")
+            # First attempt: strict UTF-8 decode
+            decoded = raw.decode("utf-8")
         except UnicodeDecodeError:
-            content = raw
+            # Fallback: decode with errors ignored, then clean
+            # This is where your \x00-style junk shows up.
+            decoded = raw.decode("utf-8", errors="ignore")
 
-    try:
-        content: Union[str, bytes] = raw.decode("utf-8")
-    except UnicodeDecodeError:
-        content = raw
+        # At this point `decoded` is always a str from bytes,
+        content = decoded
 
     file_data = FileData(file_path, content)
     file_data.file_extension = utils.get_file_extension(file_path)
