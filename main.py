@@ -1,17 +1,16 @@
 from pathlib import Path
-from typing import List
 
+import optimized.full_license_search
 import print_utils
 import utils
 from models.FileData import FileDataManager
 from loggers.main_logger import main_logger as logger
-from search import fuzzy_license_search, keyword_search, full_license_search, keyword_search_optimized
+from search import fuzzy_license_search, full_license_search
+from optimized import keyword_search, assessment_reader, full_license_search
 from timer import Timer
 from configuration import Configuration as Config
-from tools import assessment_extractor, assessment_reader, file_release_assessor, file_hash_assessor, \
-    file_content_indexer, fuzzy_matches_evaluator, assessment_data_generator, assessment_reader_multithreaded, \
-    decoded_file_content_cleaner
-from tools.file_content_indexer import PatternIndex
+from tools import file_release_assessor, file_hash_assessor, \
+    file_content_indexer, fuzzy_matches_evaluator, assessment_data_generator, decoded_file_content_cleaner
 
 p = Path(__file__).resolve()
 
@@ -29,7 +28,7 @@ def main() -> None:
     assessment_reader_timer = Timer()
     assessment_reader_timer.start("starting assessment reader timer")
     #assessment_reader.read_all_assessment_files(Config.dest_assessment_dir)
-    assessment_reader_multithreaded.read_all_assessment_files(Config.dest_assessment_dir)
+    assessment_reader.read_all_assessment_files(Config.dest_assessment_dir)
     assessment_reader_timer.stop("stopping assessment reader timer")
     print(logger.info(assessment_reader_timer.elapsed("Elapsed time for assessment reader: ")))
 
@@ -76,7 +75,9 @@ def main() -> None:
     print("Begin full license search")
     full_license_search_timer = Timer()
     full_license_search_timer.start("starting full license search timer")
-    full_license_search.search_assessment_files_for_full_licenses(licenses_normalized)
+    #full_license_search.search_assessment_files_for_full_licenses(licenses_normalized)
+    license_metadata = optimized.full_license_search.build_license_metadata(licenses_normalized)
+    optimized.full_license_search.search_assessment_files_for_full_licenses(license_metadata, Config.file_indexes)
     full_license_search_timer.stop("stopping full license search timer")
     print(logger.info(full_license_search_timer.elapsed("Elapsed time for full license search: ")))
 
@@ -101,7 +102,7 @@ def main() -> None:
     keyword_search_timer = Timer()
     keyword_search_timer.start("starting keyword search timer")
     #keyword_search.search_all_assessment_files_for_keyword_matches()
-    keyword_search_optimized.search_all_assessment_files_for_keyword_matches()
+    keyword_search.search_all_assessment_files_for_keyword_matches()
     keyword_search_timer.stop("stopping keyword search timer")
     print(logger.info(keyword_search_timer.elapsed("Elapsed time for keyword search: ")))
 

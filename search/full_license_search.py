@@ -1,9 +1,7 @@
 import utils
 from configuration import Configuration as Config
 from loggers.full_license_search_logger import full_license_search_logger as logger
-
-
-
+from tools import file_content_indexer
 
 
 def search_assessment_files_for_full_licenses(licenses_normalized):
@@ -27,4 +25,6 @@ def search_assessment_files_for_full_licenses(licenses_normalized):
 
 
 if __name__ == "__main__":
-    search_assessment_files_for_full_licenses()
+    license_headers_normalized = utils.read_and_normalize_licenses(Config.all_license_headers_dir)
+    Config.license_header_indexes = file_content_indexer.build_pattern_indexes_from_dict(license_headers_normalized, anchor_size=4)
+    search_assessment_files_for_full_licenses(Config.license_header_indexes)

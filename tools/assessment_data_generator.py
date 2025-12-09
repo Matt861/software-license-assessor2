@@ -18,7 +18,7 @@ def write_license_data_to_csv(csv_name):
         writer = csv.writer(f)
 
         # Write header row, ADD STATUS TO THIS (PERMISSIBLE/IMPERMISSIBLE
-        writer.writerow(["File Name", "License", "Match Strength", "Match %", "Fuzzy Licenses", "Full License",
+        writer.writerow(["File Name", "License", "Match %", "Fuzzy Licenses", "Full License",
                          "Is Released", "Is Empty", "Keywords", "Hash"])
 
         # Write data rows
@@ -39,11 +39,11 @@ def write_license_data_to_csv(csv_name):
 
             if file_data.fuzzy_license_match:
                 fuzzy_license_match = file_data.fuzzy_license_match
-                writer.writerow([file_cell, file_data.license_names, file_data.license_match_strength,
+                writer.writerow([file_cell, file_data.license_names,
                                  fuzzy_license_match.match_percent, fuzzy_license_match.license_name,
                                  file_data.has_full_license, file_data.is_released, file_data.file_is_empty,
                                  file_data.keyword_matches, file_data.file_hash])
             else:
-                writer.writerow([file_cell, file_data.license_names, file_data.license_match_strength, "", "",
+                writer.writerow([file_cell, file_data.license_names, "", "",
                                  file_data.has_full_license, file_data.is_released, file_data.file_is_empty,
                                  file_data.keyword_matches, file_data.file_hash])
