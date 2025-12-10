@@ -43,6 +43,7 @@ class FileData:
     def __init__(self, file_path, file_content):
         self._file_path = file_path
         self._file_content = file_content
+        self._file_content_normalized = None
         self._file_extension = None
         self._file_header = None
         self._keyword_matches = None
@@ -81,6 +82,14 @@ class FileData:
     @file_content.setter
     def file_content(self, file_content):
         self._file_content = file_content
+
+    @property
+    def file_content_normalized(self):
+        return self._file_content_normalized
+
+    @file_content_normalized.setter
+    def file_content_normalized(self, file_content_normalized):
+        self._file_content_normalized = file_content_normalized
 
     @property
     def file_extension(self):
