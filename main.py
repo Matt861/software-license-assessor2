@@ -6,7 +6,7 @@ import utils
 from models.FileData import FileDataManager
 from loggers.main_logger import main_logger as logger
 from search import fuzzy_license_search, full_license_search
-from optimized import keyword_search, assessment_reader, full_license_search
+from optimized import keyword_search, assessment_reader, full_license_search, file_hash_assessor_optimized
 from timer import Timer
 from configuration import Configuration as Config
 from tools import file_release_assessor, file_hash_assessor, \
@@ -32,11 +32,16 @@ def main() -> None:
     assessment_reader_timer.stop("stopping assessment reader timer")
     print(logger.info(assessment_reader_timer.elapsed("Elapsed time for assessment reader: ")))
 
-    # DETERMINE IF A FILE IS PART OF THE RELEASE
-    file_release_assessor.set_file_release_status()
+    # # DETERMINE IF A FILE IS PART OF THE RELEASE
+    # file_release_assessor.set_file_release_status()
 
-    # GET/SET SHA256 HASH VALUE FOR EACH FILE
-    file_hash_assessor.compute_file_hashes_for_assessment()
+    # # GET/SET SHA256 HASH VALUE FOR EACH FILE
+    # file_hash_assessor_timer = Timer()
+    # file_hash_assessor_timer.start("starting file hash assessor timer")
+    # #file_hash_assessor.compute_file_hashes_for_assessment()
+    # optimized.file_hash_assessor_optimized.compute_file_hashes_for_assessment(24)
+    # file_hash_assessor_timer.stop("stopping file hash assessor timer")
+    # print(logger.info(file_hash_assessor_timer.elapsed("Elapsed time for file hash assessor: ")))
 
     # CLEAN DECODED BINARY TEXT
     decoded_file_content_cleaner.clean_decoded_assessment_files_content()
@@ -110,7 +115,7 @@ def main() -> None:
     print("Begin csv gen")
     csv_gen_timer = Timer()
     csv_gen_timer.start("starting csv gen timer")
-    assessment_data_generator.write_license_data_to_csv("".join([Config.assessment_name, "_data9", ".csv"]))
+    assessment_data_generator.write_license_data_to_csv("".join([Config.assessment_name, "_data11", ".csv"]))
     csv_gen_timer.stop("stopping csv gen timer")
     print(logger.info(csv_gen_timer.elapsed("Elapsed time for csv gen: ")))
 
