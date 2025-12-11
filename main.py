@@ -9,7 +9,8 @@ from optimized import keyword_search_optimized, full_license_search_optimized, f
 from timer import Timer
 from configuration import Configuration as Config
 from tools import file_release_assessor, file_hash_assessor, \
-    file_content_indexer, fuzzy_matches_evaluator, assessment_data_generator, file_content_cleaner_and_normalizer
+    file_content_indexer, fuzzy_matches_evaluator, assessment_data_generator, file_content_cleaner_and_normalizer, \
+    assessment_extractor
 
 p = Path(__file__).resolve()
 
@@ -21,7 +22,7 @@ Config.file_data_manager = FileDataManager()
 
 def main() -> None:
 
-    #assessment_extractor.create_assessment_from_source(Config.source_project_dir, Config.dest_assessment_dir)
+    assessment_extractor.create_assessment_from_source(Config.source_project_dir, Config.dest_assessment_dir)
 
     # CREATES A FILE DATA OBJECT FOR EACH FILE IN THE ASSESSMENT
     assessment_reader_timer = Timer()

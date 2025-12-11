@@ -1,21 +1,23 @@
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union, Optional
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
 import utils
+
 
 WORD_RE = re.compile(r"\S+")
 
 
 @dataclass
 class FileIndex:
-    source_obj: Any  # your model instance for stringA / FileData
+    source_obj: Any  # your FileData or similar
     text: str
     tokens: List[Dict]
-    trigram_positions: Dict[Tuple[str, str, str], List[int]]
+    # Now stores 4-token anchors instead of 3-token trigrams
+    trigram_positions: Dict[Tuple[str, str, str, str], List[int]]
 
 
 @dataclass
@@ -37,8 +39,7 @@ def _ensure_text(value: Union[str, bytes]) -> str:
 
 def _tokenize_with_spans(text: str) -> List[Dict]:
     """
-    Tokenize using WORD_RE and record spans. Optimized to minimize
-    attribute lookups and repeated name resolution.
+    Tokenize using WORD_RE and record spans.
     """
     tokens: List[Dict] = []
     append = tokens.append
@@ -58,90 +59,93 @@ def _tokenize_with_spans(text: str) -> List[Dict]:
     return tokens
 
 
-def _build_trigram_positions(tokens: List[Dict], anchor_size: int) -> Dict[Tuple[str, str, str], List[int]]:
+def _build_anchor_positions(
+    tokens: List[Dict],
+    anchor_size: int,
+) -> Dict[Tuple[str, ...], List[int]]:
     """
-    Build trigram (or anchor_size-gram) index: (norm1, norm2, norm3) -> [positions].
-    Uses pre-extracted norm tokens to reduce per-iteration overhead.
-    """
-    trigram_positions: Dict[Tuple[str, str, str], List[int]] = defaultdict(list)
-    if anchor_size <= 0 or len(tokens) < anchor_size:
-        return trigram_positions
+    Build anchor_size-gram index: (norm1, ..., normN) -> [positions].
 
-    # Pre-extract normalized token strings once
+    With anchor_size=4, this becomes a 4-token anchor index.
+    """
+    positions: Dict[Tuple[str, ...], List[int]] = defaultdict(list)
+    if anchor_size <= 0 or len(tokens) < anchor_size:
+        return positions
+
     norms = [t["norm"] for t in tokens]
     n = len(norms)
 
-    if anchor_size == 3:
-        # Fast path for the common case of trigrams
-        for i in range(n - 2):
-            anchor = (norms[i], norms[i + 1], norms[i + 2])
-            trigram_positions[anchor].append(i)
+    if anchor_size == 4:
+        # Fast path for 4-token anchors
+        for i in range(n - 3):
+            anchor = (norms[i], norms[i + 1], norms[i + 2], norms[i + 3])
+            positions[anchor].append(i)
     else:
-        # Generic n-gram
+        # Generic N-gram fallback
         for i in range(n - anchor_size + 1):
             anchor = tuple(norms[i : i + anchor_size])
-            trigram_positions[anchor].append(i)
+            positions[anchor].append(i)
 
-    return trigram_positions
+    return positions
 
 
 def _build_single_file_index(obj: Any, anchor_size: int) -> FileIndex:
     """
-    Build a FileIndex for a single object. This is separated so we can
-    run it in a ThreadPoolExecutor.
+    Build a FileIndex for a single object.
+    This is used as the worker for multithreading.
     """
 
-    # If you already have pre-normalized text on the object, reuse it:
-    # e.g., obj.normalized_text or obj.indexed_text.
-    text = getattr(obj, "file_content_normalized", None)
+    # If you have pre-normalized text, reuse it:
+    # e.g. obj.normalized_text
+    text = getattr(obj, "normalized_text", None)
     if text is not None:
         text = _ensure_text(text)
     else:
-        # Fallback: normalize here (this is expensive, so it's worth
-        # centralizing if you can).
         raw = _ensure_text(obj.file_content)
         text = utils.remove_punctuation_and_normalize_text(raw)
 
     tokens = _tokenize_with_spans(text)
-    trigram_positions = _build_trigram_positions(tokens, anchor_size)
+    anchor_positions = _build_anchor_positions(tokens, anchor_size)
 
+    # Note: we keep the attribute name trigram_positions for compatibility,
+    # even though they are now 4-token anchors.
     return FileIndex(
         source_obj=obj,
         text=text,
         tokens=tokens,
-        trigram_positions=trigram_positions,
+        trigram_positions=anchor_positions,  # 4-gram anchors
     )
 
 
 def build_file_indexes(
     model_objects,          # e.g. Iterable[FileData]
-    anchor_size: int = 3,
+    anchor_size: int = 4,   # 4-token anchors by default
     max_workers: Optional[int] = None,
 ) -> List[FileIndex]:
     """
     Build FileIndex objects for all model_objects.
 
-    Performance improvements:
-      - Removes per-file print() noise.
+    Performance features:
       - Reuses pre-normalized text if available (obj.normalized_text).
-      - Minimizes overhead in tokenization and trigram-building loops.
-      - Uses a ThreadPoolExecutor to parallelize indexing across files.
+      - Minimizes overhead in tokenization/anchor-building.
+      - Uses ThreadPoolExecutor to parallelize indexing across files.
     """
-
     objs = list(model_objects)
     if not objs:
         return []
 
-    # Reasonable default for CPU-heavy-ish work (regex, lowercase, etc.)
+    # Reasonable default for CPU-bound-ish work
     if max_workers is None:
-        import os
         cpu_count = os.cpu_count() or 4
         max_workers = min(32, cpu_count * 2)
 
     file_indexes: List[FileIndex] = []
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = {executor.submit(_build_single_file_index, obj, anchor_size): obj for obj in objs}
+        futures = {
+            executor.submit(_build_single_file_index, obj, anchor_size): obj
+            for obj in objs
+        }
 
         for future in as_completed(futures):
             idx = future.result()

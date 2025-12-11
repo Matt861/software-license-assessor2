@@ -494,31 +494,39 @@ def extract_nested_archives(dest_root: Path) -> None:
 
 
 # ---------- CLI ----------
-def create_assessment_from_source(source_dir, dest_dir) -> None:
+def create_assessment_from_source(source_project_dir, dest_assessment_dir) -> None:
 
-    if source_dir.is_dir():
+    logger.info(
+        "Path check | path=%s exists=%s is_dir=%s is_file=%s",
+        source_project_dir,
+        source_project_dir.exists(),
+        source_project_dir.is_dir(),
+        source_project_dir.is_file(),
+    )
+
+    if source_project_dir.is_dir():
         # Normal directory: copy + first-level extraction, then nested extraction
-        copy_tree_with_extraction(source_dir, dest_dir)
+        copy_tree_with_extraction(source_project_dir, dest_assessment_dir)
         #rel_path = Path(source_dir.name)
         #target_dir_rel = strip_multi_suffix(rel_path)
         #target_dir = dest_dir / target_dir_rel
         # Second phase: extract all nested archives/compressed files in-place
-        extract_nested_archives(dest_dir)
+        extract_nested_archives(dest_assessment_dir)
 
-    elif source_dir.is_file():
+    elif source_project_dir.is_file():
         # Top-level is a single file (could be archive/compressed/normal):
         # Treat it as if it were a file inside a virtual root and process it,
         # then run nested extraction on whatever it produced.
-        rel_path = Path(source_dir.name)
-        copy_or_extract_file(source_dir, dest_dir, rel_path)
-        target_dir_rel = strip_multi_suffix(rel_path)
-        target_dir = dest_dir / target_dir_rel
+        rel_path = Path(source_project_dir.name)
+        copy_or_extract_file(source_project_dir, dest_assessment_dir, rel_path)
+        #target_dir_rel = strip_multi_suffix(rel_path)
+        #target_dir = dest_assessment_dir / target_dir_rel
         # Second phase: extract all nested archives/compressed files in-place
-        extract_nested_archives(dest_dir)
+        extract_nested_archives(dest_assessment_dir)
 
     else:
-        logger.error(f"Source path {source_dir} is neither a file nor a directory")
-        raise ValueError(f"Source path {source_dir} is neither a file nor a directory")
+        logger.error(f"Source path {source_project_dir} is neither a file nor a directory")
+        raise ValueError(f"Source path {source_project_dir} is neither a file nor a directory")
 
     # Second phase: extract all nested archives/compressed files in-place
     # extract_nested_archives(dest_dir)

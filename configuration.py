@@ -2,6 +2,8 @@ import os
 from jproperties import Properties
 from dotenv import load_dotenv
 from pathlib import Path
+
+import utils
 from root import get_project_root
 
 p = Path(__file__).resolve()
@@ -18,21 +20,28 @@ class Configuration:
     root_dir = get_project_root()
     ignore_dirs_str = configs.get('IGNORE_DIRS').data
     ignore_dirs = [part.strip() for part in ignore_dirs_str.split(",")]
-    source_dir = Path(configs.get("SOURCE_DIR").data).resolve()
-    dest_dir = Path(configs.get("DEST_DIR").data).resolve()
     spdx_licenses_dir = Path(root_dir, configs.get("SPDX_LICENSES_DIR").data)
     manual_licenses_dir = Path(root_dir, configs.get("MANUAL_LICENSES_DIR").data)
     all_licenses_dir = [spdx_licenses_dir, manual_licenses_dir]
     spdx_license_headers_dir = Path(root_dir, configs.get("SPDX_LICENSE_HEADERS_DIR").data)
     manual_license_headers_dir = Path(root_dir, configs.get("MANUAL_LICENSE_HEADERS_DIR").data)
     all_license_headers_dir = [spdx_license_headers_dir, manual_license_headers_dir]
-    source_project_name = configs.get("SOURCE_PROJECT_NAME").data
-    assessment_name = configs.get("ASSESSMENT_NAME").data
     file_hash_algorithm = configs.get("FILE_HASH_ALGORITHM").data
     output_dir = Path(configs.get("OUTPUT_DIR").data).resolve()
     data_dir = Path(configs.get("DATA_DIR").data).resolve()
-    source_project_dir = Path(source_dir, source_project_name)
-    dest_assessment_dir = Path(dest_dir, assessment_name)
+    # source_dir = Path(configs.get("SOURCE_DIR").data)
+    #source_dir = open('//networkdrive/license_assessments/source')
+    source_dir = configs.get("SOURCE_DIR").data
+    dest_dir = configs.get("DEST_DIR").data
+    source_project_name = configs.get("SOURCE_PROJECT_NAME").data
+    assessment_name = configs.get("ASSESSMENT_NAME").data
+    #source_project_dir = Path(source_dir, source_project_name)
+    #source_project_dir = source_dir / source_project_name
+    source_dir_is_network = configs.get("SOURCE_DIR_IS_NETWORK").data
+    dest_dir_is_network = configs.get("DEST_DIR_IS_NETWORK").data
+    source_project_dir = utils.get_source_project_dir(source_dir, source_project_name, source_dir_is_network)
+    #dest_assessment_dir = Path(dest_dir, assessment_name)
+    dest_assessment_dir = utils.get_dest_assessment_dir(dest_dir, assessment_name, dest_dir_is_network)
 
     # USE THIS ON NETWORKS WHERE DOTENV AND JPROPERTIES ARE NOT APPROVED FOR USE
     # root_dir = get_project_root()

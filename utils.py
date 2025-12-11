@@ -217,3 +217,24 @@ def read_and_normalize_licenses(license_dirs: List[Path]):
     }
 
     return licenses_normalized
+
+
+def get_source_project_dir(source_dir, source_project_name, source_dir_is_network):
+    if source_dir_is_network == "True":
+        source_dir = source_dir.replace("/", "\\")
+        source_project_dir = source_dir + "\\" + source_project_name
+    else:
+        source_project_dir = source_dir + "/" + source_project_name
+
+    return Path(source_project_dir)
+
+
+def get_dest_assessment_dir(dest_dir, assessment_name, dest_dir_is_network):
+    if dest_dir_is_network == "True":
+        source_dir = dest_dir.replace("/", "\\")
+        dest_assessment_dir = source_dir + "\\" + assessment_name
+    else:
+        dest_assessment_dir = dest_dir + "/" + assessment_name
+
+    return Path(dest_assessment_dir)
+

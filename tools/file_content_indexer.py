@@ -21,7 +21,7 @@ class PatternIndex:
     source_path: Path  # the key from Dict[Path, str]
     text: str          # the pattern string (stringB)
     tokens: List[str]
-    anchor_positions: Dict[Tuple[str, str, str], List[int]]
+    anchor_positions: Dict[Tuple[str, str, str, str], List[int]]
     anchor_keys: set
 
 
@@ -112,7 +112,7 @@ def build_pattern_indexes_from_dict(
             )
             continue
 
-        anchor_positions: Dict[Tuple[str, str, str], List[int]] = {}
+        anchor_positions: Dict[Tuple[str, str, str, str], List[int]] = {}
         for j in range(len(tokens) - anchor_size + 1):
             anchor = tuple(tokens[j + k] for k in range(anchor_size))
             anchor_positions.setdefault(anchor, []).append(j)
