@@ -250,7 +250,14 @@ def safe_extract_zip(zf: zipfile.ZipFile, path: Path) -> None:
 
 def _finalize_extract_dir(extract_dir: Path, final_dir: Path) -> None:
     """
-    Ensure extracted content ends up at final_dir, replacing any existing file/dir.
+    Finalize an extraction directory:
+
+    - If extract_dir == final_dir: nothing extra to do.
+    - Otherwise:
+        * remove any existing file/dir at final_dir
+        * rename/move extract_dir to final_dir
+
+    After this, there should be NO lingering '*_extracted' dirs.
     """
     if extract_dir == final_dir:
         debug_print(f"[finalize] extract_dir == final_dir == {final_dir}, nothing to do")
@@ -265,8 +272,8 @@ def _finalize_extract_dir(extract_dir: Path, final_dir: Path) -> None:
             debug_print(f"[finalize] Removing dir {final_dir}")
             shutil.rmtree(final_dir)
 
-    extract_dir.parent.mkdir(parents=True, exist_ok=True)
-    os.replace(extract_dir, final_dir)
+    # Now move/rename the extracted directory into place
+    extract_dir.rename(final_dir)
 
 
 def extract_multi(src_file: Path, dest_root: Path, rel_path: Path) -> None:
@@ -282,6 +289,9 @@ def extract_multi(src_file: Path, dest_root: Path, rel_path: Path) -> None:
     base_name = default_dir_rel.name
 
     archive_src = src_file  # works for normal archives and layer blobs
+
+    if "a99f83c3b8d3f289ab14b9307263607c7b7bad13d8f12efeb8b46bae2ba1315b" in str(archive_src):
+        print('')
 
     # ZIP?
     if zipfile.is_zipfile(archive_src):
@@ -315,7 +325,7 @@ def extract_multi(src_file: Path, dest_root: Path, rel_path: Path) -> None:
 
             extract_dir.mkdir(parents=True, exist_ok=True)
             safe_extract_zip(zf, extract_dir)
-            _finalize_extract_dir(extract_dir, final_dir)
+        _finalize_extract_dir(extract_dir, final_dir)
         return
 
     # TAR (covers .tar, .tar.gz, and hash layer blobs)
@@ -350,7 +360,7 @@ def extract_multi(src_file: Path, dest_root: Path, rel_path: Path) -> None:
 
             extract_dir.mkdir(parents=True, exist_ok=True)
             safe_extract_tar(tf, extract_dir)
-            _finalize_extract_dir(extract_dir, final_dir)
+        _finalize_extract_dir(extract_dir, final_dir)
         return
 
     except (tarfile.ReadError, OSError, FileNotFoundError) as e:
