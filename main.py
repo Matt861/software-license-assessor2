@@ -10,7 +10,7 @@ from timer import Timer
 from configuration import Configuration as Config
 from tools import file_release_assessor, file_hash_assessor, \
     file_content_indexer, fuzzy_matches_evaluator, assessment_data_generator, file_content_cleaner_and_normalizer, \
-    assessment_extractor
+    assessment_extractor, assessment_compare
 
 p = Path(__file__).resolve()
 
@@ -31,7 +31,11 @@ def main() -> None:
     file_data_load_timer.stop("stopping file data load")
     print(logger.info(file_data_load_timer.elapsed("Elapsed time for file data load: ")))
 
-    assessment_extractor.create_assessment_from_source(Config.source_project_dir, Config.dest_assessment_dir)
+    assessment_extractor_timer = Timer()
+    assessment_extractor_timer.start("starting assessment extractor")
+    #assessment_extractor.create_assessment_from_source(Config.source_project_dir, Config.dest_assessment_dir)
+    assessment_extractor_timer.stop("stopping assessment extractor")
+    print(logger.info(assessment_extractor_timer.elapsed("Elapsed time for assessment extractor: ")))
 
     # CREATES A FILE DATA OBJECT FOR EACH FILE IN THE ASSESSMENT
     assessment_reader_timer = Timer()
@@ -40,6 +44,18 @@ def main() -> None:
     assessment_reader_optimized.read_all_assessment_files(Config.dest_assessment_dir)
     assessment_reader_timer.stop("stopping assessment reader timer")
     print(logger.info(assessment_reader_timer.elapsed("Elapsed time for assessment reader: ")))
+
+    # COMPARE TWO ASSESSMENT'S FILE DATA FOR DIFFERENCES IN HASHES
+    assessment_compare_timer = Timer()
+    assessment_compare_timer.start("starting assessment compare timer")
+    #old_file_data_object = Config.file_data_manager.get_file_data(Path("C:/license_assessments/extracted/ubi8-java8-assessment2/my-ubi8-java8/blobs/sha256/8f42ad26ccdae7ec04dac9501e3c011a88c8663559699974ecf1697999914f0d/etc/krb5.conf"))
+    #old_file_data_object.file_hash = "003cd0a16a54e9ff1e852cb08b8d5b0b3df17ac8f8cc382537298d82g35221b2"
+    #Config.loaded_file_data_manager.remove_file_data_obj(old_file_data_object)
+    old_file_data = Config.loaded_file_data_manager.get_all_file_data()
+    new_file_data = Config.file_data_manager.get_all_file_data()
+    assessment_compare.compare_assessment_file_hashes(old_file_data, new_file_data)
+    assessment_compare_timer.stop("stopping assessment compare timer")
+    print(logger.info(assessment_compare_timer.elapsed("Elapsed time for assessment compare: ")))
 
     # # DETERMINE IF A FILE IS PART OF THE RELEASE
     # file_release_assessor.set_file_release_status()

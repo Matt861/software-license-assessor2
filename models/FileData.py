@@ -336,6 +336,20 @@ class FileDataManager:
         """Returns a list of all FileData instances."""
         return list(self.file_data_dict.values())
 
+    def remove_file_data(self, file_path: Path) -> Optional[FileData]:
+        """
+        Removes and returns the FileData for `file_path`.
+
+        Returns:
+          - The removed FileData if it existed
+          - None if it was not present
+        """
+        return self.file_data_dict.pop(file_path, None)
+
+    def remove_file_data_obj(self, file_info: FileData) -> Optional[FileData]:
+        """Removes and returns the FileData for `file_info.file_path`."""
+        return self.remove_file_data(file_info.file_path)
+
     # ---------- JSON persistence ----------
 
     def save_to_json(self, path: Path = Path(Config.data_dir).resolve()) -> None:

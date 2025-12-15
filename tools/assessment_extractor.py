@@ -290,9 +290,6 @@ def extract_multi(src_file: Path, dest_root: Path, rel_path: Path) -> None:
 
     archive_src = src_file  # works for normal archives and layer blobs
 
-    if "a99f83c3b8d3f289ab14b9307263607c7b7bad13d8f12efeb8b46bae2ba1315b" in str(archive_src):
-        print('')
-
     # ZIP?
     if zipfile.is_zipfile(archive_src):
         debug_print(f"[extract_multi] ZIP archive detected: {archive_src}")
