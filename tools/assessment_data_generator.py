@@ -14,6 +14,7 @@ def write_license_data_to_csv(csv_name):
       - or dictionary keys: 'file_name', 'license'
     """
     csv_path = Path(Config.output_dir, csv_name).resolve()
+    csv_path.mkdir(parents=True, exist_ok=True)
     with open(csv_path, mode="w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
 
