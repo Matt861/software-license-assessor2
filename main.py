@@ -25,7 +25,11 @@ Config.loaded_file_data_manager = FileDataManager()
 def main() -> None:
 
     # LOAD PRE-EXISTING FILE DATA FROM JSON
+    file_data_load_timer = Timer()
+    file_data_load_timer.start("starting file data load")
     Config.loaded_file_data_manager = FileDataManager.load_from_json()
+    file_data_load_timer.stop("stopping file data load")
+    print(logger.info(file_data_load_timer.elapsed("Elapsed time for file data load: ")))
 
     assessment_extractor.create_assessment_from_source(Config.source_project_dir, Config.dest_assessment_dir)
 
