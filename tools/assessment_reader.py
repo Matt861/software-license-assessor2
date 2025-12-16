@@ -1,10 +1,10 @@
+from configuration import Configuration as Config
+from loggers.assessment_reader_logger import assessment_reader_logger as logger
+from models.FileData import FileData
+import utils
 import os
 from pathlib import Path
 from typing import Union
-import utils
-from models.FileData import FileData
-from configuration import Configuration as Config
-from loggers.assessment_reader_logger import assessment_reader_logger as logger
 
 
 # def read_all_assessment_files(root_dir):

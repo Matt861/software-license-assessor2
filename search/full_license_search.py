@@ -1,5 +1,5 @@
-import utils
 from configuration import Configuration as Config
+import utils
 from tools import file_content_indexer
 
 

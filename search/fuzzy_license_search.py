@@ -1,10 +1,10 @@
-import re
-import utils
-from typing import Dict, List, Tuple, Optional
 from configuration import Configuration as Config
 from models.FileData import FileDataManager
 from tools import file_content_indexer
 from tools.file_content_indexer import FileIndex, PatternIndex, MatchResult
+import utils
+import re
+from typing import Dict, List, Tuple, Optional
 
 
 def _align_with_gaps(

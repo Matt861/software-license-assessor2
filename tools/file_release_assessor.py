@@ -1,5 +1,5 @@
-from pathlib import Path
 from configuration import Configuration as Config
+from pathlib import Path
 
 
 def is_ignored_dir(src_dir: Path) -> bool:

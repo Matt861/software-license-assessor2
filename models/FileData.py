@@ -352,7 +352,8 @@ class FileDataManager:
 
     # ---------- JSON persistence ----------
 
-    def save_to_json(self, path: Path = Path(Config.data_dir).resolve()) -> None:
+    def save_to_json(self, path: Path = Config.data_dir) -> None:
+        path.mkdir(parents=True, exist_ok=True)
         path = Path(path, Config.assessment_name).resolve()
         path = Path(path).with_suffix(".json")
         data = [fd.to_persisted_dict() for fd in self.get_all_file_data()]

@@ -1,9 +1,8 @@
-from collections import Counter
-from pathlib import Path
-
 from configuration import Configuration as Config
 from search.fuzzy_license_search import MatchResult
 from tools.print_statements_to_file_output import tee_stdout
+from collections import Counter
+from pathlib import Path
 
 
 def print_files_with_full_license_match():
@@ -33,7 +32,7 @@ def get_best_match_percent(file_data) -> float:
             best = fuzzy.match_percent
     return best
 
-def print_files_with_fuzzy_license_matches(file_path="output/fuzzy_license_matches4.txt"):
+def print_files_with_fuzzy_license_matches(file_path="output/fuzzy_license_matches.txt"):
     sorted_list = sorted(
         Config.file_data_manager.get_all_file_data(),
         key=lambda f: (

@@ -1,8 +1,8 @@
+import utils
 import re
 from pathlib import Path
 from typing import List, Dict, Tuple, Any, Union, Optional
 from dataclasses import dataclass
-import utils
 
 
 WORD_RE = re.compile(r"\S+")

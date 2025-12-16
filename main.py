@@ -1,5 +1,4 @@
 from configuration import Configuration as Config
-from pathlib import Path
 import print_utils
 import utils
 from models.FileData import FileDataManager
@@ -8,9 +7,9 @@ from search import fuzzy_license_search
 from optimized import keyword_search_optimized, full_license_search_optimized, file_hash_assessor_optimized, \
     file_content_indexer_optimized, assessment_reader_optimized
 from timer import Timer
-#from old_code.configuration import Configuration as Config
 from tools import file_content_indexer, fuzzy_matches_evaluator, assessment_data_generator, file_content_cleaner_and_normalizer, \
     assessment_extractor, assessment_compare
+from pathlib import Path
 
 p = Path(__file__).resolve()
 
@@ -34,21 +33,20 @@ def main(assessment_created=False, is_assessment_compare=False) -> None:
     # CREATES A FILE DATA OBJECT FOR EACH FILE IN THE ASSESSMENT
     assessment_reader_timer = Timer()
     assessment_reader_timer.start("starting assessment reader timer")
-    #assessment_reader.read_all_assessment_files(Config.dest_assessment_dir)
     assessment_reader_optimized.read_all_assessment_files(Config.dest_assessment_dir)
     assessment_reader_timer.stop("stopping assessment reader timer")
     print(logger.info(assessment_reader_timer.elapsed("Elapsed time for assessment reader: ")))
 
-    # GET/SET SHA256 HASH VALUE FOR EACH FILE
-    file_hash_assessor_timer = Timer()
-    file_hash_assessor_timer.start("starting file hash assessor timer")
-    #file_hash_assessor.compute_file_hashes_for_assessment()
-    file_hash_assessor_optimized.compute_file_hashes_for_assessment(24)
-    file_hash_assessor_timer.stop("stopping file hash assessor timer")
-    print(logger.info(file_hash_assessor_timer.elapsed("Elapsed time for file hash assessor: ")))
+    # # GET/SET SHA256 HASH VALUE FOR EACH FILE
+    # file_hash_assessor_timer = Timer()
+    # file_hash_assessor_timer.start("starting file hash assessor timer")
+    # #file_hash_assessor.compute_file_hashes_for_assessment()
+    # file_hash_assessor_optimized.compute_file_hashes_for_assessment(24)
+    # file_hash_assessor_timer.stop("stopping file hash assessor timer")
+    # print(logger.info(file_hash_assessor_timer.elapsed("Elapsed time for file hash assessor: ")))
 
-    # CLEAN DECODED BINARY TEXT
-    file_content_cleaner_and_normalizer.clean_and_normalize_assessment_files_content()
+    # # CLEAN DECODED BINARY TEXT
+    # file_content_cleaner_and_normalizer.clean_and_normalize_assessment_files_content()
 
     if is_assessment_compare:
         # LOAD PRE-EXISTING FILE DATA FROM JSON
@@ -61,9 +59,6 @@ def main(assessment_created=False, is_assessment_compare=False) -> None:
         # COMPARE TWO ASSESSMENT'S FILE DATA FOR DIFFERENCES IN HASHES
         assessment_compare_timer = Timer()
         assessment_compare_timer.start("starting assessment compare timer")
-        #old_file_data_object = Config.file_data_manager.get_file_data(Path("C:/license_assessments/extracted/ubi8-java8-assessment2/my-ubi8-java8/blobs/sha256/8f42ad26ccdae7ec04dac9501e3c011a88c8663559699974ecf1697999914f0d/etc/krb5.conf"))
-        #old_file_data_object.file_hash = "003cd0a16a54e9ff1e852cb08b8d5b0b3df17ac8f8cc382537298d82g35221b2"
-        #Config.loaded_file_data_manager.remove_file_data_obj(old_file_data_object)
         old_file_data = Config.loaded_file_data_manager.get_all_file_data()
         new_file_data = Config.file_data_manager.get_all_file_data()
         assessment_compare.find_new_or_changed_files(old_file_data, new_file_data)
@@ -87,7 +82,6 @@ def main(assessment_created=False, is_assessment_compare=False) -> None:
     # BREAK LICENSE AND FILE STRING INDEXING OUT INTO THEIR OWN MODULES
     file_indexing_timer = Timer()
     file_indexing_timer.start("starting file indexing timer")
-    #Config.file_indexes = file_content_indexer.build_file_indexes(Config.file_data_manager.get_all_file_data(), anchor_size=4)
     Config.file_indexes = file_content_indexer_optimized.build_file_indexes(Config.file_data_manager.get_all_file_data(), anchor_size=4)
     file_indexing_timer.stop("stopping file indexing timer")
     print(logger.info(file_indexing_timer.elapsed("Elapsed time for file indexing: ")))
@@ -97,15 +91,11 @@ def main(assessment_created=False, is_assessment_compare=False) -> None:
     Config.license_header_indexes = file_content_indexer.build_pattern_indexes_from_dict(license_headers_normalized, anchor_size=4)
     license_indexing_timer.stop("stopping license indexing timer")
     print(logger.info(license_indexing_timer.elapsed("Elapsed time for license indexing: ")))
-    #Config.license_indexes = file_content_indexer.build_pattern_indexes_from_dict(licenses_normalized, anchor_size=4)
-    #print("Combining license indexes")
-    #combined_license_indexes: List[PatternIndex] = Config.license_indexes + Config.license_header_indexes
 
     # SCAN ALL ASSESSMENT FILES FOR FULL LICENSE MATCHES
     print("Begin full license search")
     full_license_search_timer = Timer()
     full_license_search_timer.start("starting full license search timer")
-    #full_license_search.search_assessment_files_for_full_licenses(licenses_normalized)
     license_metadata = full_license_search_optimized.build_license_metadata(licenses_normalized)
     full_license_search_optimized.search_assessment_files_for_full_licenses(license_metadata, Config.file_indexes)
     full_license_search_timer.stop("stopping full license search timer")
@@ -131,7 +121,6 @@ def main(assessment_created=False, is_assessment_compare=False) -> None:
     print("Begin keyword search")
     keyword_search_timer = Timer()
     keyword_search_timer.start("starting keyword search timer")
-    #keyword_search.search_all_assessment_files_for_keyword_matches()
     keyword_search_optimized.search_all_assessment_files_for_keyword_matches()
     keyword_search_timer.stop("stopping keyword search timer")
     print(logger.info(keyword_search_timer.elapsed("Elapsed time for keyword search: ")))
@@ -140,7 +129,7 @@ def main(assessment_created=False, is_assessment_compare=False) -> None:
     print("Begin csv gen")
     csv_gen_timer = Timer()
     csv_gen_timer.start("starting csv gen timer")
-    assessment_data_generator.write_license_data_to_csv("".join([Config.assessment_name, "_data12", ".csv"]))
+    assessment_data_generator.write_license_data_to_csv("".join([Config.assessment_name, "_data", ".csv"]))
     csv_gen_timer.stop("stopping csv gen timer")
     print(logger.info(csv_gen_timer.elapsed("Elapsed time for csv gen: ")))
 
@@ -160,8 +149,10 @@ if __name__ == "__main__":
     main(is_assessment_created, is_diff)
 
     # print_utils.print_files_with_full_license_match()
-    print_utils.print_files_with_fuzzy_license_matches()
+    print_utils.print_files_with_fuzzy_license_matches("output/fuzzy_license_matches.txt")
     print_utils.print_empty_files()
+    print(f"Total assessment file count: {Config.assessment_file_count}")
+    print(f"Released file count: {Config.released_file_count}")
     print('Done')
     main_timer.stop("stopping main timer")
     print(logger.info(main_timer.elapsed("Elapsed time for main: ")))

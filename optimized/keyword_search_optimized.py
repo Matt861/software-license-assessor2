@@ -1,11 +1,11 @@
-import collections
-from dataclasses import dataclass
-from typing import Dict, List, Set
-import utils
 from configuration import Configuration as Config
+import utils
 from input.keyword_strings import license_matches, general_matches, \
     custom_search_matches, license_name_matches, license_abbreviation_matches, license_url_matches
 from tools.file_content_indexer import FileIndex
+import collections
+from dataclasses import dataclass
+from typing import Dict, List, Set
 
 
 ALL_MATCH_LISTS: Dict[str, List[str]] = {
@@ -86,8 +86,6 @@ def _find_matches_in_index(index: FileIndex) -> Dict[str, List[str]]:
     - Multi-word terms: sliding-window token sequence comparison.
     - No trigrams used.
     """
-    if "PropertyEditorManager" in str(index.source_obj.file_path):
-        print('found')
     if not index.tokens:
         return {}
 

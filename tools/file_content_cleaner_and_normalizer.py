@@ -1,6 +1,6 @@
-import re
-import utils
 from configuration import Configuration as Config
+import utils
+import re
 
 
 # One or more control chars (except \n, \r, \t) → single space

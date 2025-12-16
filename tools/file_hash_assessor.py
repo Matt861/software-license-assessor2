@@ -1,8 +1,9 @@
+from configuration import Configuration as Config
+from models.FileData import FileData
 import hashlib
 import os
 from pathlib import Path
-from configuration import Configuration as Config
-from models.FileData import FileData
+
 
 CHUNK_SIZE = 1024 * 1024  # 1 MB
 

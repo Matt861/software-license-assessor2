@@ -12,14 +12,14 @@ def write_license_data_to_csv(csv_name):
       - attributes: file_name, license
       - or dictionary keys: 'file_name', 'license'
     """
-    csv_path = Path(Config.output_dir, csv_name).resolve()
-    csv_path.mkdir(parents=True, exist_ok=True)
+    csv_path = Path(Config.output_dir, csv_name)
+    Config.output_dir.mkdir(parents=True, exist_ok=True)
     with open(csv_path, mode="w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
 
         # Write header row, ADD STATUS TO THIS (PERMISSIBLE/IMPERMISSIBLE
-        writer.writerow(["File Name", "License", "Match %", "Fuzzy Licenses", "Full License",
-                         "Is Released", "Is Empty", "Keywords", "Hash"])
+        writer.writerow(["File Name", "Licenses", "Match %", "Full License",
+                        "Is Empty", "Keywords", "Hash"])
 
         # Write data rows
         for file_data in Config.file_data_manager.get_all_file_data():
@@ -39,11 +39,9 @@ def write_license_data_to_csv(csv_name):
 
             if file_data.fuzzy_license_match:
                 fuzzy_license_match = file_data.fuzzy_license_match
-                writer.writerow([file_cell, file_data.license_names,
-                                 fuzzy_license_match.match_percent, fuzzy_license_match.license_name,
-                                 file_data.has_full_license, file_data.is_released, file_data.file_is_empty,
+                writer.writerow([file_cell, file_data.license_names, fuzzy_license_match.match_percent,
+                                 file_data.has_full_license, file_data.file_is_empty,
                                  file_data.keyword_matches, file_data.file_hash])
             else:
-                writer.writerow([file_cell, file_data.license_names, "", "",
-                                 file_data.has_full_license, file_data.is_released, file_data.file_is_empty,
-                                 file_data.keyword_matches, file_data.file_hash])
+                writer.writerow([file_cell, file_data.license_names, "", file_data.has_full_license,
+                                 file_data.file_is_empty, file_data.keyword_matches, file_data.file_hash])

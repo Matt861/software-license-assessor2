@@ -1,7 +1,8 @@
-from pathlib import Path
-import utils
 from property_reader import load_properties
 from root import get_project_root
+import utils
+from pathlib import Path
+
 
 p = Path(__file__).resolve()
 
@@ -38,3 +39,7 @@ class Configuration:
     license_indexes = None
     # Indexed license header content
     license_header_indexes = None
+    # Total assessment file count
+    assessment_file_count = 0
+    # Total released file couht
+    released_file_count = 0

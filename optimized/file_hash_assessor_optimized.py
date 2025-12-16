@@ -1,10 +1,11 @@
+from configuration import Configuration as Config
+from models.FileData import FileData
+from loggers.file_hash_assessor_logger import file_hash_assessor_logger as logger
 import hashlib
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from configuration import Configuration as Config
-from models.FileData import FileData
-from loggers.file_hash_assessor_logger import file_hash_assessor_logger as logger
+
 
 # Larger chunk size = fewer read syscalls & loop iterations
 CHUNK_SIZE = 8 * 1024 * 1024  # 8 MB

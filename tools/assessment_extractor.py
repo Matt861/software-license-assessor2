@@ -1,3 +1,5 @@
+from configuration import Configuration as Config
+from loggers.assessment_extractor_logger import assessment_extractor_logger as logger
 import os
 import shutil
 from pathlib import Path
@@ -6,9 +8,6 @@ import tarfile
 import gzip
 import bz2
 import lzma
-from loggers.assessment_extractor_logger import assessment_extractor_logger as logger
-from configuration import Configuration as Config
-
 
 
 # Toggle this to turn noisy debug output on/off

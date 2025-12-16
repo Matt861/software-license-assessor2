@@ -1,6 +1,6 @@
 from configuration import Configuration as Config
-from typing import Iterable, List, Set
 from models.FileData import FileData
+from typing import Iterable, List, Set
 
 
 def find_new_or_changed_files(old_data: Iterable[FileData], new_data: Iterable[FileData],) -> List[FileData]:

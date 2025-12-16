@@ -1,7 +1,7 @@
-from collections import defaultdict, Counter
-from typing import Dict, List
 from configuration import Configuration as Config
 from search.fuzzy_license_search import MatchResult
+from collections import defaultdict, Counter
+from typing import Dict, List
 
 
 def is_match_percent_greater_than_all(fuzzy_license_match, best_fuzzy_matches):

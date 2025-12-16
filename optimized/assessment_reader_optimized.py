@@ -1,13 +1,13 @@
+from configuration import Configuration as Config
+from models.FileData import FileData
+from loggers.assessment_reader_logger import assessment_reader_logger as logger
+import utils
 import hashlib
 import os
 import re
 from pathlib import Path
 from typing import Union, Optional, List
-import utils
-from models.FileData import FileData
-from configuration import Configuration as Config
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from loggers.assessment_reader_logger import assessment_reader_logger as logger
 
 
 # One or more control chars (except \n, \r, \t) → single space
@@ -83,9 +83,9 @@ def _read_single_file(file_path: Path) -> Optional["FileData"]:
     file_data = FileData(file_path, content)
     file_data.file_extension = utils.get_file_extension(file_path)
     file_data.file_is_empty = is_empty
-    #file_data.file_hash = file_hash
-    #cleaned_file_content = clean_decoded_binary_text(content)
-    #file_data.file_content_normalized = utils.remove_punctuation_and_normalize_text(cleaned_file_content)
+    file_data.file_hash = file_hash
+    cleaned_file_content = clean_decoded_binary_text(file_data.file_content)
+    file_data.file_content_normalized = utils.remove_punctuation_and_normalize_text(cleaned_file_content)
     return file_data
 
 
@@ -103,8 +103,10 @@ def read_all_assessment_files(root_dir, max_workers: Optional[int] = None):
     for dirpath, dirnames, filenames in os.walk(root_dir):
         dirpath_path = Path(dirpath)
         for filename in filenames:
+            Config.assessment_file_count += 1
             if not is_ignored_dir(dirpath_path / filename):
                 file_paths.append(dirpath_path / filename)
+                Config.released_file_count += 1
 
     #logger.info("Found %d files to read under %s", len(file_paths), root_dir)
     print(logger.info(f"Found files to read under: {len(file_paths)} {root_dir}"))

@@ -53,22 +53,6 @@ def get_int(props: Dict[str, str], key: str, default: int = 0) -> int:
     return int(v.strip())
 
 
-def get_config_property_values():
-    config_path = Path("config.properties")
-    props = load_properties(config_path)
-
-    source_dir = Path(props["SOURCE_DIR"])
-    dest_dir = Path(props["DEST_DIR"])
-    debug = get_bool(props, "DEBUG", default=False)
-    max_workers = get_int(props, "MAX_WORKERS", default=4)
-
-    print("SOURCE_DIR:", source_dir)
-    print("DEST_DIR:", dest_dir)
-    print("DEBUG:", debug)
-    print("MAX_WORKERS:", max_workers)
-
-
-# Example usage:
 if __name__ == "__main__":
     config_path = Path("config.properties")
     props = load_properties(config_path)

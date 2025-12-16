@@ -1,10 +1,10 @@
+from timer import Timer
 import os
 import json
 import re
 from typing import Union
 import requests
 import unicodedata
-from timer import Timer
 
 def normalize_for_compare(value: Union[str, bytes, None]) -> str:
     """
@@ -140,7 +140,7 @@ if __name__ == "__main__":
     #     licenses_json_path="licenses.json",
     # )
     timer = Timer()
-    timer.start()
+    timer.start("Starting SPDX license downloader timer")
     download_all_spdx_licenses("input/licenses2", "input/licenses.json")
-    timer.stop()
+    timer.stop("Stopping SPDX license downloader timer")
     print(timer.elapsed())
