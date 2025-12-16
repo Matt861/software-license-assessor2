@@ -2,8 +2,8 @@ from typing import Dict, List, Union
 
 import utils
 from configuration import Configuration as Config
-from input.keyword_strings import copyright_matches, license_matches, prohibitive_matches, general_matches, \
-    export_matches, custom_search_matches, license_name_matches, license_abbreviation_matches, license_url_matches
+from input.keyword_strings import license_matches, general_matches, \
+    custom_search_matches, license_name_matches, license_abbreviation_matches, license_url_matches
 
 ALL_MATCH_LISTS: Dict[str, List[str]] = {
     #"copyright": copyright_matches,

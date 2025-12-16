@@ -1,5 +1,4 @@
 import re
-
 import utils
 from configuration import Configuration as Config
 

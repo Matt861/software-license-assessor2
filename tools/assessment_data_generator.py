@@ -1,5 +1,4 @@
 import csv
-import os.path
 from pathlib import Path
 from configuration import Configuration as Config
 

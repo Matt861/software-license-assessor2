@@ -1,7 +1,5 @@
 import utils
 from configuration import Configuration as Config
-from loggers.full_license_search_logger import full_license_search_logger as logger
-from tools import file_content_indexer
 from pathlib import Path
 from typing import Dict, List, Tuple
 

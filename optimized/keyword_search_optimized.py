@@ -1,13 +1,10 @@
 import collections
-import re
-from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Union, Set, Tuple
+from typing import Dict, List, Set
 import utils
-from loggers.keyword_search_logger import keyword_search_logger as logger
 from configuration import Configuration as Config
-from input.keyword_strings import copyright_matches, license_matches, prohibitive_matches, general_matches, \
-    export_matches, custom_search_matches, license_name_matches, license_abbreviation_matches, license_url_matches
+from input.keyword_strings import license_matches, general_matches, \
+    custom_search_matches, license_name_matches, license_abbreviation_matches, license_url_matches
 from tools.file_content_indexer import FileIndex
 
 

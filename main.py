@@ -1,15 +1,15 @@
+from configuration import Configuration as Config
 from pathlib import Path
 import print_utils
 import utils
 from models.FileData import FileDataManager
 from loggers.main_logger import main_logger as logger
-from search import fuzzy_license_search, full_license_search
+from search import fuzzy_license_search
 from optimized import keyword_search_optimized, full_license_search_optimized, file_hash_assessor_optimized, \
     file_content_indexer_optimized, assessment_reader_optimized
 from timer import Timer
-from configuration import Configuration as Config
-from tools import file_release_assessor, file_hash_assessor, \
-    file_content_indexer, fuzzy_matches_evaluator, assessment_data_generator, file_content_cleaner_and_normalizer, \
+#from old_code.configuration import Configuration as Config
+from tools import file_content_indexer, fuzzy_matches_evaluator, assessment_data_generator, file_content_cleaner_and_normalizer, \
     assessment_extractor, assessment_compare
 
 p = Path(__file__).resolve()

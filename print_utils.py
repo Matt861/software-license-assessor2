@@ -1,8 +1,6 @@
 from collections import Counter
 from pathlib import Path
 
-import utils
-from loggers.print_utils_logger import print_utils_logger as logger
 from configuration import Configuration as Config
 from search.fuzzy_license_search import MatchResult
 from tools.print_statements_to_file_output import tee_stdout

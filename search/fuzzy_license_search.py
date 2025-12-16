@@ -1,12 +1,10 @@
 import re
 import utils
-from typing import Any, Dict, List, Tuple, Optional, Union
+from typing import Dict, List, Tuple, Optional
 from configuration import Configuration as Config
-from loggers.fuzzy_license_search_logger import fuzzy_license_search_logger as logger
 from models.FileData import FileDataManager
 from tools import file_content_indexer
-from tools.file_content_indexer import FileIndex, PatternIndex, MatchResult, build_file_indexes, \
-    build_pattern_indexes_from_dict
+from tools.file_content_indexer import FileIndex, PatternIndex, MatchResult
 
 
 def _align_with_gaps(

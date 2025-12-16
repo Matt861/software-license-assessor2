@@ -1,6 +1,5 @@
 from configuration import Configuration as Config
-from loggers.assessment_compare_logger import assessment_compare_logger as logger
-from typing import Iterable, List, Set, Optional
+from typing import Iterable, List, Set
 from models.FileData import FileData
 
 
