@@ -22,20 +22,14 @@ Config.file_data_manager = FileDataManager()
 # Global instance of loaded file data manager
 Config.loaded_file_data_manager = FileDataManager()
 
-def main() -> None:
+def main(assessment_created=False, is_assessment_compare=False) -> None:
 
-    # LOAD PRE-EXISTING FILE DATA FROM JSON
-    file_data_load_timer = Timer()
-    file_data_load_timer.start("starting file data load")
-    Config.loaded_file_data_manager = FileDataManager.load_from_json()
-    file_data_load_timer.stop("stopping file data load")
-    print(logger.info(file_data_load_timer.elapsed("Elapsed time for file data load: ")))
-
-    assessment_extractor_timer = Timer()
-    assessment_extractor_timer.start("starting assessment extractor")
-    #assessment_extractor.create_assessment_from_source(Config.source_project_dir, Config.dest_assessment_dir)
-    assessment_extractor_timer.stop("stopping assessment extractor")
-    print(logger.info(assessment_extractor_timer.elapsed("Elapsed time for assessment extractor: ")))
+    if not assessment_created:
+        assessment_extractor_timer = Timer()
+        assessment_extractor_timer.start("starting assessment extractor")
+        assessment_extractor.create_assessment_from_source(Config.source_project_dir, Config.dest_assessment_dir)
+        assessment_extractor_timer.stop("stopping assessment extractor")
+        print(logger.info(assessment_extractor_timer.elapsed("Elapsed time for assessment extractor: ")))
 
     # CREATES A FILE DATA OBJECT FOR EACH FILE IN THE ASSESSMENT
     assessment_reader_timer = Timer()
@@ -45,31 +39,37 @@ def main() -> None:
     assessment_reader_timer.stop("stopping assessment reader timer")
     print(logger.info(assessment_reader_timer.elapsed("Elapsed time for assessment reader: ")))
 
-    # COMPARE TWO ASSESSMENT'S FILE DATA FOR DIFFERENCES IN HASHES
-    assessment_compare_timer = Timer()
-    assessment_compare_timer.start("starting assessment compare timer")
-    #old_file_data_object = Config.file_data_manager.get_file_data(Path("C:/license_assessments/extracted/ubi8-java8-assessment2/my-ubi8-java8/blobs/sha256/8f42ad26ccdae7ec04dac9501e3c011a88c8663559699974ecf1697999914f0d/etc/krb5.conf"))
-    #old_file_data_object.file_hash = "003cd0a16a54e9ff1e852cb08b8d5b0b3df17ac8f8cc382537298d82g35221b2"
-    #Config.loaded_file_data_manager.remove_file_data_obj(old_file_data_object)
-    old_file_data = Config.loaded_file_data_manager.get_all_file_data()
-    new_file_data = Config.file_data_manager.get_all_file_data()
-    assessment_compare.compare_assessment_file_hashes(old_file_data, new_file_data)
-    assessment_compare_timer.stop("stopping assessment compare timer")
-    print(logger.info(assessment_compare_timer.elapsed("Elapsed time for assessment compare: ")))
-
-    # # DETERMINE IF A FILE IS PART OF THE RELEASE
-    # file_release_assessor.set_file_release_status()
-
-    # # GET/SET SHA256 HASH VALUE FOR EACH FILE
-    # file_hash_assessor_timer = Timer()
-    # file_hash_assessor_timer.start("starting file hash assessor timer")
-    # #file_hash_assessor.compute_file_hashes_for_assessment()
-    # optimized.file_hash_assessor_optimized.compute_file_hashes_for_assessment(24)
-    # file_hash_assessor_timer.stop("stopping file hash assessor timer")
-    # print(logger.info(file_hash_assessor_timer.elapsed("Elapsed time for file hash assessor: ")))
+    # GET/SET SHA256 HASH VALUE FOR EACH FILE
+    file_hash_assessor_timer = Timer()
+    file_hash_assessor_timer.start("starting file hash assessor timer")
+    #file_hash_assessor.compute_file_hashes_for_assessment()
+    file_hash_assessor_optimized.compute_file_hashes_for_assessment(24)
+    file_hash_assessor_timer.stop("stopping file hash assessor timer")
+    print(logger.info(file_hash_assessor_timer.elapsed("Elapsed time for file hash assessor: ")))
 
     # CLEAN DECODED BINARY TEXT
     file_content_cleaner_and_normalizer.clean_and_normalize_assessment_files_content()
+
+    if is_assessment_compare:
+        # LOAD PRE-EXISTING FILE DATA FROM JSON
+        file_data_load_timer = Timer()
+        file_data_load_timer.start("starting file data load")
+        Config.loaded_file_data_manager = FileDataManager.load_from_json()
+        file_data_load_timer.stop("stopping file data load")
+        print(logger.info(file_data_load_timer.elapsed("Elapsed time for file data load: ")))
+
+        # COMPARE TWO ASSESSMENT'S FILE DATA FOR DIFFERENCES IN HASHES
+        assessment_compare_timer = Timer()
+        assessment_compare_timer.start("starting assessment compare timer")
+        #old_file_data_object = Config.file_data_manager.get_file_data(Path("C:/license_assessments/extracted/ubi8-java8-assessment2/my-ubi8-java8/blobs/sha256/8f42ad26ccdae7ec04dac9501e3c011a88c8663559699974ecf1697999914f0d/etc/krb5.conf"))
+        #old_file_data_object.file_hash = "003cd0a16a54e9ff1e852cb08b8d5b0b3df17ac8f8cc382537298d82g35221b2"
+        #Config.loaded_file_data_manager.remove_file_data_obj(old_file_data_object)
+        old_file_data = Config.loaded_file_data_manager.get_all_file_data()
+        new_file_data = Config.file_data_manager.get_all_file_data()
+        assessment_compare.find_new_or_changed_files(old_file_data, new_file_data)
+        assessment_compare.find_removed_files(old_file_data, new_file_data)
+        assessment_compare_timer.stop("stopping assessment compare timer")
+        print(logger.info(assessment_compare_timer.elapsed("Elapsed time for assessment compare: ")))
 
     # READ/LOAD/NORMALIZE CONTENT OF LICENSES
     license_header_reader_timer = Timer()
@@ -83,7 +83,6 @@ def main() -> None:
     licenses_normalized = utils.read_and_normalize_licenses(Config.all_licenses_dir)
     license_reader_timer.stop("stopping license reader timer")
     print(logger.info(license_reader_timer.elapsed("Elapsed time for license reader: ")))
-
 
     # BREAK LICENSE AND FILE STRING INDEXING OUT INTO THEIR OWN MODULES
     file_indexing_timer = Timer()
@@ -156,7 +155,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    is_assessment_created = True
+    is_diff = False
+    main(is_assessment_created, is_diff)
 
     # print_utils.print_files_with_full_license_match()
     print_utils.print_files_with_fuzzy_license_matches()

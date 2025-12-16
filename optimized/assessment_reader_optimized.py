@@ -58,10 +58,10 @@ def _read_single_file(file_path: Path) -> Optional["FileData"]:
     is_empty = (len(raw) == 0)
 
     # compute hash directly from raw bytes (only disk read)
-    algo = Config.file_hash_algorithm  # e.g., "sha256"
-    h = hashlib.new(algo)
-    h.update(raw)
-    file_hash = h.hexdigest()
+    # algo = Config.file_hash_algorithm  # e.g., "sha256"
+    # h = hashlib.new(algo)
+    # h.update(raw)
+    # file_hash = h.hexdigest()
 
 
     if is_empty:
@@ -83,7 +83,7 @@ def _read_single_file(file_path: Path) -> Optional["FileData"]:
     file_data = FileData(file_path, content)
     file_data.file_extension = utils.get_file_extension(file_path)
     file_data.file_is_empty = is_empty
-    file_data.file_hash = file_hash
+    #file_data.file_hash = file_hash
     #cleaned_file_content = clean_decoded_binary_text(content)
     #file_data.file_content_normalized = utils.remove_punctuation_and_normalize_text(cleaned_file_content)
     return file_data
