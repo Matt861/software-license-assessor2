@@ -43,3 +43,7 @@ class Configuration:
     assessment_file_count = 0
     # Total released file count
     released_file_count = 0
+    # File data for diff compare
+    diff_file_data = None
+    # Flag to overwrite dest directory if it already exists
+    overwrite_dest = False

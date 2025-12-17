@@ -22,9 +22,9 @@ Config.file_data_manager = FileDataManager()
 # Global instance of loaded file data manager
 Config.loaded_file_data_manager = FileDataManager()
 
-def main(assessment_created=False, is_assessment_compare=False) -> None:
+def main(assessment_created=False) -> None:
 
-    if not assessment_created:
+    if not Config.dest_assessment_dir.exists() or Config.overwrite_dest:
         assessment_extractor_timer = Timer()
         assessment_extractor_timer.start("starting assessment extractor")
         assessment_extractor.create_assessment_from_source(Config.source_project_dir, Config.dest_assessment_dir)
@@ -49,7 +49,7 @@ def main(assessment_created=False, is_assessment_compare=False) -> None:
     # # CLEAN DECODED BINARY TEXT
     # file_content_cleaner_and_normalizer.clean_and_normalize_assessment_files_content()
 
-    if is_assessment_compare:
+    if Config.diff_file_data:
         # LOAD PRE-EXISTING FILE DATA FROM JSON
         file_data_load_timer = Timer()
         file_data_load_timer.start("starting file data load")
@@ -147,8 +147,7 @@ def main(assessment_created=False, is_assessment_compare=False) -> None:
 if __name__ == "__main__":
     DirectoryPickerApp().run()
     is_assessment_created = True
-    is_diff = False
-    main(is_assessment_created, is_diff)
+    main(is_assessment_created)
 
     # print_utils.print_files_with_full_license_match()
     print_utils.print_files_with_fuzzy_license_matches("output/fuzzy_license_matches.txt")
