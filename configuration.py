@@ -41,5 +41,5 @@ class Configuration:
     license_header_indexes = None
     # Total assessment file count
     assessment_file_count = 0
-    # Total released file couht
+    # Total released file count
     released_file_count = 0
