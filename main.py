@@ -1,3 +1,4 @@
+from GUI.gui_main import DirectoryPickerApp
 from configuration import Configuration as Config
 import print_utils
 import utils
@@ -144,6 +145,7 @@ def main(assessment_created=False, is_assessment_compare=False) -> None:
 
 
 if __name__ == "__main__":
+    DirectoryPickerApp().run()
     is_assessment_created = True
     is_diff = False
     main(is_assessment_created, is_diff)

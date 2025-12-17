@@ -7,9 +7,9 @@ from pathlib import Path
 p = Path(__file__).resolve()
 
 class Configuration:
-    config_path = Path("config.properties")
-    props = load_properties(config_path)
     root_dir = get_project_root()
+    config_path = Path(root_dir, "config.properties")
+    props = load_properties(config_path)
     ignore_dirs = [part.strip() for part in props["IGNORE_DIRS"].split(",")]
     spdx_licenses_dir = Path(root_dir, props["SPDX_LICENSES_DIR"])
     manual_licenses_dir = Path(root_dir, props["MANUAL_LICENSES_DIR"])
