@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 class DirectoryPickerApp:
-    def __init__(self, title: str = "Software License Assessor"):
+    def __init__(self, title: str = "Software License Assessor Setup"):
         self.root = tk.Tk()
         self.root.title(title)
         self.root.resizable(False, False)
